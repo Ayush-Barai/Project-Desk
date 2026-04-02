@@ -2,6 +2,14 @@
 
 declare(strict_types=1);
 
+/**
+ * PasswordUpdateTest
+ *
+ * Feature tests for authenticated password update functionality.
+ * Tests password change validation, current password verification,
+ * and successful password updates for logged-in users.
+ */
+
 namespace Tests\Feature\Auth;
 
 use App\Models\User;

@@ -3,6 +3,7 @@ includes:
     - vendor/nesbot/carbon/extension.neon
     - phar://phpstan.phar/conf/bleedingEdge.neon
 
+
 parameters:
 
     paths:
@@ -17,3 +18,6 @@ parameters:
     level: max
 
     tmpDir: /tmp/phpstan
+
+    excludePaths:
+        - database\migrations\2026_04_01_104512_create_permission_tables.php

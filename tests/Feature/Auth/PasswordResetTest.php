@@ -2,6 +2,14 @@
 
 declare(strict_types=1);
 
+/**
+ * PasswordResetTest
+ *
+ * Feature tests for password reset functionality.
+ * Tests password reset request flow, reset link generation,
+ * password validation, and email notification delivery.
+ */
+
 namespace Tests\Feature\Auth;
 
 use App\Models\User;

@@ -2,6 +2,14 @@
 
 declare(strict_types=1);
 
+/**
+ * EmailVerificationTest
+ *
+ * Feature tests for email verification functionality.
+ * Tests email verification screen rendering, verification link handling,
+ * already verified user access, and notification resending.
+ */
+
 use App\Models\User;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Event;

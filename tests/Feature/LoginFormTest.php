@@ -2,6 +2,13 @@
 
 declare(strict_types=1);
 
+/**
+ * LoginFormTest
+ *
+ * Tests for the login form component.
+ * Verifies form rendering, input validation, and user interaction with login elements.
+ */
+
 use App\Livewire\Forms\LoginForm;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;

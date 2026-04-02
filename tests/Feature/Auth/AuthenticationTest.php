@@ -2,9 +2,20 @@
 
 declare(strict_types=1);
 
+/**
+ * AuthenticationTest
+ *
+ * Feature tests for user authentication functionality.
+ * Tests login screen rendering, user authentication flow, error handling,
+ * navigation menu display, and logout functionality using Volt components.
+ */
+
 use App\Models\User;
 use Livewire\Volt\Volt;
 
+// Test: Verify login screen renders successfully
+// Description: Ensures the login page is accessible and loads without errors,
+// validating the basic authentication UI is available to users
 test('login screen can be rendered', function (): void {
     $response = $this->get('/login');
 
@@ -13,6 +24,9 @@ test('login screen can be rendered', function (): void {
         ->assertSeeVolt('pages.auth.login');
 });
 
+// Test: Verify user can successfully authenticate with valid credentials
+// Description: Ensures the login flow works correctly with valid email and password,
+// authenticating the user and redirecting to the dashboard
 test('users can authenticate using the login screen', function (): void {
     $user = User::factory()->create();
 
@@ -29,6 +43,9 @@ test('users can authenticate using the login screen', function (): void {
     $this->assertAuthenticated();
 });
 
+// Test: Verify login fails with invalid password
+// Description: Ensures authentication fails when an incorrect password is provided,
+// preventing unauthorized access and maintaining security
 test('users can not authenticate with invalid password', function (): void {
     $user = User::factory()->create();
 
