@@ -2,6 +2,13 @@
 
 declare(strict_types=1);
 
+/**
+ * TaskStatusTest
+ *
+ * Tests for the TaskStatus enum.
+ * Validates all valid task statuses and their definitions for task workflow management.
+ */
+
 use App\Enums\TaskStatus;
 
 it('returns correct label for each status', function (TaskStatus $status, string $expectedLabel): void {

@@ -2,6 +2,13 @@
 
 declare(strict_types=1);
 
+/**
+ * ProjectStatusTest
+ *
+ * Tests for the ProjectStatus enum.
+ * Validates all valid statuses and their definitions for project workflow management.
+ */
+
 use App\Enums\ProjectStatus;
 
 it('returns correct label for each status', function (ProjectStatus $status, string $expectedLabel): void {

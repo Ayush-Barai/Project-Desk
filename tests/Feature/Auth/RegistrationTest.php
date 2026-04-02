@@ -2,6 +2,14 @@
 
 declare(strict_types=1);
 
+/**
+ * RegistrationTest
+ *
+ * Feature tests for user registration functionality.
+ * Tests registration page rendering, user registration flow, form validation,
+ * email verification, automatic login after registration, and database persistence.
+ */
+
 namespace Tests\Feature\Auth;
 
 use Livewire\Volt\Volt;

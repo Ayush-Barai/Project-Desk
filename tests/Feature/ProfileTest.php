@@ -2,6 +2,14 @@
 
 declare(strict_types=1);
 
+/**
+ * ProfileTest
+ *
+ * Feature tests for user profile management functionality.
+ * Tests profile page rendering, profile information updates,
+ * profile deletion, and user data persistence.
+ */
+
 use App\Models\User;
 use Livewire\Volt\Volt;
 

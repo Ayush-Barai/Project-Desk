@@ -2,6 +2,14 @@
 
 declare(strict_types=1);
 
+/**
+ * PasswordConfirmationTest
+ *
+ * Feature tests for password confirmation functionality.
+ * Tests password confirmation screen rendering, confirmation validation,
+ * and access control for sensitive operations requiring password re-entry.
+ */
+
 namespace Tests\Feature\Auth;
 
 use App\Models\User;

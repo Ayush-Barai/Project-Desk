@@ -2,6 +2,13 @@
 
 declare(strict_types=1);
 
+/**
+ * TaskPriorityTest
+ *
+ * Tests for the TaskPriority enum.
+ * Validates all valid priority levels and their definitions for task prioritization.
+ */
+
 use App\Enums\TaskPriority;
 
 it('returns correct label for each priority', function (TaskPriority $priority, string $expectedLabel): void {

@@ -2,6 +2,14 @@
 
 declare(strict_types=1);
 
+/**
+ * VerifyEmailControllerTest
+ *
+ * Tests for the email verification controller.
+ * Verifies email verification link handling, token validation,
+ * and proper redirect after successful verification.
+ */
+
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Models\User;
 use Illuminate\Auth\Events\Verified;

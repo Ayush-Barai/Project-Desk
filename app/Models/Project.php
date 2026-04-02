@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\ProjectStatus;
+use Carbon\CarbonInterface;
 use Database\Factories\ProjectFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,108 +15,155 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
+/**
+ * Project Model
+ *
+ * Represents a project within a workspace. Projects are the main organizational unit containing tasks,
+ * milestones, team members, and other related entities. They support complex relationships for managing
+ * team collaboration, time tracking, and project progress.
+ *
+ * @property int $id
+ * @property int $workspace_id Workspace this project belongs to
+ * @property string $name Project name
+ * @property string|null $slug URL-friendly identifier for the project
+ * @property string|null $description Project description
+ * @property ProjectStatus $status Current status of the project
+ * @property CarbonInterface|null $start_date When the project begins
+ * @property CarbonInterface|null $end_date When the project is scheduled to end
+ * @property float|null $budget_hours Total estimated hours allocated for the project
+ * @property string|null $color Hex color code for UI representation
+ * @property CarbonInterface $created_at
+ * @property CarbonInterface $updated_at
+ */
 final class Project extends Model
 {
     /**
      * @use HasFactory<ProjectFactory>
-     * Enables factory usage for this model
      */
     use HasFactory;
 
-    // Defines which attributes can be mass-assigned (e.g., via create() or fill())
+    /**
+     * The attributes that are mass assignable.
+     *
+     * These fields can be safely filled using the create() or fill() methods
+     * without explicit whitelisting in the request or instantiation.
+     *
+     * @var list<string>
+     */
     protected $fillable = [
-        'workspace_id', // Foreign key linking to workspace
-        'name', // Project name
-        'slug', // URL-friendly identifier
-        'description', // Project description
-        'status', // Project status (enum)
-        'start_date', // Start date of project
-        'end_date', // End date of project
-        'budget_hours', // Estimated hours for project
-        'color', // Color identifier (UI purpose)
-    ];
-
-    // Defines attribute casting (automatic conversion)
-    protected $casts = [
-        'status' => ProjectStatus::class, // Casts status to enum ProjectStatus
+        'workspace_id',
+        'name',
+        'slug',
+        'description',
+        'status',
+        'start_date',
+        'end_date',
+        'budget_hours',
+        'color',
     ];
 
     /**
-     * Defines relationship: Project belongs to a Workspace
+     * The attributes that should be cast.
      *
-     * @return BelongsTo<Workspace, $this>
+     * Automatically converts enum fields to their respective enum classes
+     * and handles type conversions for other attributes.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'status' => ProjectStatus::class,
+    ];
+
+    /**
+     * Retrieve the workspace this project belongs to.
+     *
+     * Establishes the inverse of a one-to-many relationship with Workspace,
+     * contextualizing the project within its parent workspace.
+     *
+     * @return BelongsTo<Workspace, $this> The workspace containing this project
      */
     public function workspace(): BelongsTo
     {
-        // Links project to workspace using workspace_id as foreign key
         return $this->belongsTo(Workspace::class, 'workspace_id', 'id');
     }
 
     /**
-     * Defines relationship: many-to-many between Project and User
+     * Retrieve all members assigned to this project.
      *
-     * @return BelongsToMany<User, $this>
+     * Establishes a many-to-many relationship with User through the 'project_user' pivot table,
+     * including role assignments for each team member. Tracks creation/update timestamps on the pivot.
+     *
+     * @return BelongsToMany<User, $this> All team members assigned to this project with roles
      */
     public function members(): BelongsToMany
     {
-        // Uses pivot table 'project_user' with project_id and user_id
         return $this->belongsToMany(User::class, 'project_user', 'project_id', 'user_id')
-            ->withPivot('role') // Include 'role' from pivot table
-            ->withTimestamps(); // Manage timestamps on pivot table
+            ->withPivot('role')
+            ->withTimestamps();
     }
 
     /**
-     * Defines relationship: one project has many tasks
+     * Retrieve all tasks in this project.
      *
-     * @return HasMany<Task, $this>
+     * Establishes a one-to-many relationship with Task,
+     * allowing access to all work items within the project scope.
+     *
+     * @return HasMany<Task, $this> All tasks in this project
      */
     public function tasks(): HasMany
     {
-        // Links tasks using project_id as foreign key
         return $this->hasMany(Task::class, 'project_id', 'id');
     }
 
     /**
-     * Defines relationship: one project has many milestones
+     * Retrieve all milestones in this project.
      *
-     * @return HasMany<Milestone, $this>
+     * Establishes a one-to-many relationship with Milestone,
+     * enabling organization of tasks into key checkpoints and deliverables.
+     *
+     * @return HasMany<Milestone, $this> All milestones in this project
      */
     public function milestones(): HasMany
     {
-        // Links milestones using project_id as foreign key
         return $this->hasMany(Milestone::class, 'project_id', 'id');
     }
 
     /**
-     * Defines polymorphic relationship: project can have many comments
+     * Retrieve all comments on this project.
      *
-     * @return MorphMany<Comment, $this>
+     * Establishes a polymorphic one-to-many relationship with Comment,
+     * enabling team discussion and collaboration at the project level.
+     *
+     * @return MorphMany<Comment, $this> All comments attached to this project
      */
     public function comments(): MorphMany
     {
-        // Links comments using polymorphic relation (commentable_id and commentable_type)
         return $this->morphMany(Comment::class, 'commentable', 'commentable_type', 'commentable_id', 'id');
     }
 
     /**
-     * Defines relationship: one project has many activities
+     * Retrieve all activity records for this project.
      *
-     * @return HasMany<Activity, $this>
+     * Establishes a one-to-many relationship with Activity,
+     * providing an audit trail of all actions and changes within the project.
+     *
+     * @return HasMany<Activity, $this> All activity logs for this project
      */
     public function activities(): HasMany
     {
-        // Links activities using project_id as foreign key
         return $this->hasMany(Activity::class, 'project_id', 'id');
     }
 
     /**
-     * Defines relationship: one project has one latest activity
+     * Retrieve the most recent activity for this project.
      *
-     * @return HasOne<Activity, $this>
+     * Establishes a one-to-one relationship with Activity using latestOfMany(),
+     * providing quick access to the latest activity without additional queries.
+     *
+     * @return HasOne<Activity, $this> The most recent activity in this project
      */
     public function latestActivity(): HasOne
     {
-        // Gets only the most recent activity using latestOfMany()
         return $this->hasOne(Activity::class, 'project_id', 'id')->latestOfMany();
     }
 }

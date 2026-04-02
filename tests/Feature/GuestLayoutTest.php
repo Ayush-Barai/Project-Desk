@@ -2,6 +2,13 @@
 
 declare(strict_types=1);
 
+/**
+ * GuestLayoutTest
+ *
+ * Tests for the guest layout template used by authentication pages.
+ * Verifies proper rendering, navigation elements, and styling for unauthenticated users.
+ */
+
 use App\View\Components\GuestLayout;
 use Illuminate\View\View;
 

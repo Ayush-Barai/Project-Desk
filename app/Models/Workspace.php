@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Carbon\CarbonInterface;
 use Database\Factories\WorkspaceFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,78 +14,96 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-// Relation type: indirect one-to-many
-
+/**
+ * Workspace Model
+ *
+ * Represents a workspace - the top-level organizational container for projects, users, labels,
+ * and all related entities. Each workspace has an owner and can have multiple members with different roles.
+ * Workspaces support soft deletion for data integrity.
+ *
+ * @property int $id
+ * @property int $owner_id User who owns this workspace
+ * @property string $name Workspace name
+ * @property string|null $slug URL-friendly identifier for the workspace
+ * @property string|null $description Workspace description
+ * @property string|null $avatar Avatar image path or URL
+ * @property CarbonInterface|null $deleted_at Soft delete timestamp
+ * @property CarbonInterface $created_at
+ * @property CarbonInterface $updated_at
+ */
 final class Workspace extends Model
 {
     /**
      * @use HasFactory<WorkspaceFactory>
-     * Enables factory usage for this model
      */
     use HasFactory;
 
     use SoftDeletes;
 
     /**
-     * Defines the owner relationship (a workspace belongs to one user)
+     * Retrieve the user who owns this workspace.
      *
-     * @return BelongsTo<User, $this>
+     * Establishes the inverse of a one-to-many relationship with User,
+     * identifying the workspace's owner and administrator.
+     *
+     * @return BelongsTo<User, $this> The user who owns this workspace
      */
     public function owner(): BelongsTo
     {
-        // Links this workspace to a User using 'owner_id' as foreign key
         return $this->belongsTo(User::class, 'owner_id', 'id');
     }
 
     /**
-     * Defines members relationship (many-to-many between workspace and users)
+     * Retrieve all members of this workspace.
      *
-     * @return BelongsToMany<User, $this>
+     * Establishes a many-to-many relationship with User through the 'workspace_user' pivot table,
+     * including role information for each member. Tracks creation/update timestamps on the pivot.
+     *
+     * @return BelongsToMany<User, $this> All users who are members of this workspace with assigned roles
      */
     public function members(): BelongsToMany
     {
-        // Defines pivot table 'workspace_user' with foreign keys workspace_id and user_id
         return $this->belongsToMany(User::class, 'workspace_user', 'workspace_id', 'user_id')
-            ->withPivot('role') // Include 'role' attribute from pivot table in results
-            ->withTimestamps(); // Automatically manage created_at and updated_at on pivot table
+            ->withPivot('role')
+            ->withTimestamps();
     }
 
     /**
-     * Defines projects relationship (one workspace has many projects)
+     * Retrieve all projects in this workspace.
      *
-     * @return HasMany<Project, $this>
+     * Establishes a one-to-many relationship with Project,
+     * returning all projects that belong to this workspace.
+     *
+     * @return HasMany<Project, $this> All projects contained within this workspace
      */
     public function projects(): HasMany
     {
-        // Links workspace to projects using workspace_id as foreign key
         return $this->hasMany(Project::class, 'workspace_id', 'id');
     }
 
     /**
-     * Defines labels relationship (one workspace has many labels)
+     * Retrieve all labels defined in this workspace.
      *
-     * @return HasMany<Label, $this>
+     * Establishes a one-to-many relationship with Label,
+     * providing access to all categorization tags scoped to this workspace.
+     *
+     * @return HasMany<Label, $this> All labels defined for use in this workspace
      */
     public function labels(): HasMany
     {
-        // Links workspace to labels using workspace_id as foreign key
         return $this->hasMany(Label::class, 'workspace_id', 'id');
     }
 
     /**
-     * Defines tasks relationship through projects (indirect relationship)
+     * Retrieve all tasks across all projects in this workspace.
      *
-     * @return HasManyThrough<Task, Project, $this>
+     * Establishes a one-to-many-through relationship with Task via Project,
+     * providing convenient access to all work items without explicit project filtering.
+     *
+     * @return HasManyThrough<Task, Project, $this> All tasks in all projects within this workspace
      */
     public function tasks(): HasManyThrough
     {
-        // Gets tasks through projects:
-        // Task model → final model we want
-        // Project model → intermediate model
-        // 'workspace_id' → foreign key on projects table
-        // 'project_id' → foreign key on tasks table
-        // 'id' → local key on workspace
-        // 'id' → local key on project
         return $this->hasManyThrough(Task::class, Project::class, 'workspace_id', 'project_id', 'id', 'id');
     }
 }
