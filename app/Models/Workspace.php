@@ -106,4 +106,9 @@ final class Workspace extends Model
     {
         return $this->hasManyThrough(Task::class, Project::class, 'workspace_id', 'project_id', 'id', 'id');
     }
+
+    public function isOwner(string $userId): bool
+    {
+        return (string) $this->owner_id === $userId;
+    }
 }
