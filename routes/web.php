@@ -14,16 +14,21 @@ Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
 
-Route::middleware(['auth', 'workspace'])->group(function (): void {
+Route::middleware(['auth'])
+    ->name('workspaces.')
+    ->group(function (): void {
 
-    Route::livewire('/workspaces/create', 'workspaces.create')
-        ->name('workspaces.create');
+    Route::get('/workspaces', ListWorkspaces::class)
+        ->name('index');
 
-    Route::livewire('/workspaces/{workspace}', 'workspaces.show')
-        ->name('workspaces.show');
+    Route::get('/workspaces/create', CreateWorkspace::class)
+        ->name('create');
 
-    Route::livewire('/workspaces/{workspace}/members', 'workspaces.members')
-        ->name('workspaces.members');
+    Route::get('/workspaces/{workspace}', ShowWorkspace::class)
+        ->name('show');
+
+    Route::get('/workspaces/{workspace}/members', Members::class)
+        ->name('members');
 });
 
 require __DIR__.'/auth.php';
