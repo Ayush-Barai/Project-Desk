@@ -1,68 +1,3 @@
-<?php
-
-use Livewire\Component;
-use App\Models\Workspace;
-use App\Models\User;
-
-new class extends Component {
-
-    public Workspace $workspace;
-    public $email = '';
-    public $suggestions =  [];
-
-    public function updatedEmail()
-    {
-        if (strlen($this->email) > 1) {
-            $this->suggestions = User::where('email', 'like', $this->email . '%')
-                ->limit(5)
-                ->get();
-        } else {
-            $this->suggestions = [];
-        }
-    }
-
-    public function selectEmail($email)
-    {
-        $this->email = $email;
-        $this->suggestions = [];
-    }
-
-    public function mount(Workspace $workspace) : void
-    {
-        $this->workspace = $workspace;
-    }
-
-    public function addMember() : void
-    {
-        $user = User::where('email', $this->email)->first();
-
-        if (!$user) {
-            $this->addError('email', 'User not found');
-            return;
-        }
-        else if($this->workspace->members()->find($user->id))
-        {
-            $this->addError('email', 'User is already a member');
-            return;
-        }
-      
-        $this->workspace->members()->attach($user->id, [
-            'role' => 'Member'
-        ]);
-
-        $this->email = '';
-    }
-
-    public function updateRole($userId, $role)  : void
-    {
-        $this->workspace->members()->updateExistingPivot($userId, [
-            'role' => $role
-        ]);
-    }
-
-};
-
-?>
 <div class="p-6 max-w-2xl mx-auto text-white">
     
     <!-- Header -->
@@ -117,14 +52,22 @@ new class extends Component {
                     <p class="text-xs text-gray-400">Member</p>
                 </div>
 
-                <!-- Role Selector -->
-                <select wire:change="updateRole({{ $user->id }}, $event.target.value)"
-                        class="bg-gray-800 border border-gray-600 rounded-lg px-2 py-1 text-sm focus:ring-2 focus:ring-blue-500">
-                    
-                    <option value="Member" @selected($user->pivot->role === 'member')>Member</option>
-                    <option value="Admin" @selected($user->pivot->role === 'admin')>Admin</option>
-                    <option value="Owner" @selected($user->pivot->role === 'owner')>Owner</option>
-                </select>
+                <div class="flex gap-2">
+                    <!-- Role Selector -->
+                    <select wire:change="updateRole('{{ $user->id }}', $event.target.value)"
+                            class="bg-gray-800 border border-gray-600 rounded-lg px-2 py-1 text-sm focus:ring-2 focus:ring-blue-500">
+                        
+                        <option value="member" @selected($user->pivot->role === 'member')>Member</option>
+                        <option value="admin" @selected($user->pivot->role === 'admin')>Admin</option>
+                        <option value="owner" @selected($user->pivot->role === 'owner')>Owner</option>
+                        
+                    </select>
+
+                    <button wire:click="removeUser('{{ $user->id }}')"
+                            class="bg-red-600 hover:bg-red-700 transition px-3 py-1.5 rounded-lg text-sm">
+                        Remove
+                    </button>
+                </div>
             </div>
 
         @empty

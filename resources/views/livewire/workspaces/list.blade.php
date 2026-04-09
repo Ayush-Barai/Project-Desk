@@ -1,32 +1,3 @@
-<?php
-
-use Livewire\Component;
-use App\Models\Workspace;
-
-new class extends Component {
-
-
-    public function getWorkspacesProperty()
-    {
-        $user =  auth()->user();
-        return $user->workspaces()->latest()->simplePaginate(4);
-    }
-
-    public function switch($id)
-    {
-        session(['workspace_id' => $id]);
-    }
-    public function deleteWorkspace($id)
-    {
-        if(auth()->user()->can('delete',Auth::user() , Workspace::class)){
-            abort(403 , 'You can not delete the workspace !!!');
-        }
-        Workspace::destroy(['id' => $id]);
-    }
-
-};
-
-?>
 <div class="p-6 max-w-3xl mx-auto text-white space-y-6">
 
     <!-- Header -->
@@ -52,6 +23,7 @@ new class extends Component {
 
                 <!-- Left -->
                 <a href="{{ route('workspaces.show', $workspace) }}"
+                    wire:click.stop="switch({{ $workspace->id }})"
                    class="flex-1">
                     
                     <p class="text-sm font-medium">{{ $workspace->name }}</p>
@@ -64,9 +36,10 @@ new class extends Component {
                 <!-- Right -->
                 <button wire:click.stop="switch({{ $workspace->id }})"
                         class="ml-4 bg-blue-600 hover:bg-blue-700 transition px-3 py-1.5 rounded-lg text-sm">
-                    Switch
+                    Edit
                 </button>   
                 <button wire:click.stop="deleteWorkspace({{ $workspace->id }})"
+                        wire:confirm="Are you sure you want to delete {{ $workspace->name }} workspace ?"
                         class="ml-4 bg-red-600 hover:bg-red-700 transition px-3 py-1.5 rounded-lg text-sm">
                     Delete
                 </button>

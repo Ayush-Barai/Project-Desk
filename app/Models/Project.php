@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Project Model
@@ -40,7 +41,7 @@ final class Project extends Model
     /**
      * @use HasFactory<ProjectFactory>
      */
-    use HasFactory;
+    use HasFactory , SoftDeletes;
 
     /**
      * The attributes that are mass assignable.

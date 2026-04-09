@@ -1,49 +1,3 @@
-<?php
-
-use Livewire\Component;
-use App\Models\Workspace;
-use App\Models\Project;
-
-new class extends Component {
-
-    public Workspace $workspace;
-
-    public function mount(Workspace $workspace)
-    {
-        // Security check (extra safety)
-        if (auth()->user()->id !== $workspace->owner_id) {
-            abort(403);
-        }
-
-        $this->workspace = $workspace;
-
-        // set current workspace in session
-        session(['workspace_id' => $workspace->id]);
-    }
-
-    // Computed: Members
-    public function getMembersProperty()
-    {
-        return $this->workspace->members()->withPivot('role')->get();
-    }
-
-    // Computed: Projects
-    public function getProjectsProperty()
-    {
-        return Project::where('workspace_id', $this->workspace->id)->latest()->get();
-    }
-
-    // Computed: Stats
-    public function getStatsProperty()
-    {
-        return [
-            'members' => $this->workspace->members()->count(),
-            'projects' => Project::where('workspace_id', $this->workspace->id)->count(),
-        ];
-    }
-
-};
-?>
 <div class="p-6 max-w-5xl mx-auto space-y-8 text-white">
 
     <!-- Header -->
@@ -116,9 +70,9 @@ new class extends Component {
         <div class="p-4 border-b border-gray-700 flex justify-between items-center">
             <h2 class="text-lg font-semibold">Projects</h2>
 
-            <button class="text-sm bg-green-600 hover:bg-green-700 px-3 py-1 rounded-lg">
+            <a href="{{ route('projects.create') }}" class="text-sm bg-green-600 hover:bg-green-700 px-3 py-1 rounded-lg">
                 + New Project
-            </button>
+            </a>
         </div>
 
         @if($this->projects->isEmpty())
@@ -128,7 +82,8 @@ new class extends Component {
         @else
             <div class="divide-y divide-gray-700">
                 @foreach($this->projects as $project)
-                    <div class="flex items-center justify-between p-4 hover:bg-gray-800 transition">
+                    <a href="{{ route('projects.show' , $project) }}"
+                        class="flex items-center justify-between p-4 hover:bg-gray-800 transition">
 
                         <div>
                             <p class="text-sm font-medium">{{ $project->name }}</p>
@@ -143,7 +98,7 @@ new class extends Component {
                         ">
                             {{  ($project->status) }}
                         </span>
-                    </div>
+                    </a>
                 @endforeach
             </div>
         @endif
