@@ -70,7 +70,7 @@
         <div class="p-4 border-b border-gray-700 flex justify-between items-center">
             <h2 class="text-lg font-semibold">Projects</h2>
 
-            <a href="{{ route('projects.create') }}" class="text-sm bg-green-600 hover:bg-green-700 px-3 py-1 rounded-lg">
+            <a href="#" class="text-sm bg-green-600 hover:bg-green-700 px-3 py-1 rounded-lg">
                 + New Project
             </a>
         </div>
@@ -82,7 +82,7 @@
         @else
             <div class="divide-y divide-gray-700">
                 @foreach($this->projects as $project)
-                    <a href="{{ route('projects.show' , $project) }}"
+                    <a href="#"
                         class="flex items-center justify-between p-4 hover:bg-gray-800 transition">
 
                         <div>

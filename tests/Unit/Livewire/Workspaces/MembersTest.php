@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Livewire\Workspaces;
 
-use App\Enums\WorkspaceRole;
 use App\Models\User;
 use App\Models\Workspace;
 use Illuminate\View\View;
@@ -43,9 +42,6 @@ final class Members extends Component
 
     public function addMember(): void
     {
-        // Authorization check
-        $this->authorize('manageMembers', $this->workspace);
-
         $user = User::query()->where('email', $this->email)->first();
 
         if (! $user) {
@@ -61,7 +57,7 @@ final class Members extends Component
         }
 
         $this->workspace->members()->attach($user->id, [
-            'role' => WorkspaceRole::Member->value,
+            'role' => 'Member',
         ]);
 
         $this->email = '';
@@ -69,16 +65,6 @@ final class Members extends Component
 
     public function updateRole(int $userId, string $role): void
     {
-        // Only owner can assign roles
-        $this->authorize('assignRole', $this->workspace);
-
-        // Validate role
-        if (! WorkspaceRole::tryFrom($role)) {
-            $this->addError('role', 'Invalid role');
-
-            return;
-        }
-
         $this->workspace->members()->updateExistingPivot($userId, [
             'role' => $role,
         ]);
@@ -86,9 +72,6 @@ final class Members extends Component
 
     public function removeUser(int $userId): void
     {
-        // Authorization check: Only owner and admin can manage members
-        $this->authorize('manageMembers', $this->workspace);
-
         $this->workspace->members()->detach($userId);
     }
 

@@ -16,8 +16,8 @@ final class ShowWorkspace extends Component
 
     public function mount(Workspace $workspace): void
     {
-        // Security check: User must be a member of the workspace
-        $this->authorize('view', $workspace);
+        // Security check (extra safety)
+        abort_if(auth()->user()->id !== $workspace->owner_id, 403);
 
         $this->workspace = $workspace;
 

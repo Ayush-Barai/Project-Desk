@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Livewire\Workspaces;
 
-use App\Enums\WorkspaceRole;
 use App\Models\Workspace;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Str;
@@ -30,9 +29,9 @@ final class CreateWorkspace extends Component
             'owner_id' => auth()->id(),
         ]);
 
-        // Attach owner with Owner role
+        // Attach owner
         $workspace->members()->attach(auth()->id(), [
-            'role' => WorkspaceRole::Owner->value,
+            'role' => 'owner',
         ]);
 
         session(['workspace_id' => $workspace->id]);

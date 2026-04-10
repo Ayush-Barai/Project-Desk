@@ -24,6 +24,7 @@ it('allows members to view workspace', function (): void {
 it('allows owner to update workspace', function (): void {
     $user = User::factory()->create();
     $workspace = Workspace::factory()->create(['owner_id' => $user->id]);
+    $workspace->members()->attach($user->id, ['role' => 'owner']);
 
     expect($this->policy->update($user, $workspace))->toBeTrue();
 });
@@ -40,6 +41,7 @@ it('denies non-owner from updating workspace', function (): void {
 it('allows owner to delete workspace', function (): void {
     $user = User::factory()->create();
     $workspace = Workspace::factory()->create(['owner_id' => $user->id]);
+    $workspace->members()->attach($user->id, ['role' => 'owner']);
 
     expect($this->policy->delete($user, $workspace))->toBeTrue();
 });
@@ -91,6 +93,7 @@ it('denies non-member from managing members', function (): void {
 it('allows owner to assign roles', function (): void {
     $user = User::factory()->create();
     $workspace = Workspace::factory()->create(['owner_id' => $user->id]);
+    $workspace->members()->attach($user->id, ['role' => 'owner']);
 
     expect($this->policy->assignRole($user, $workspace))->toBeTrue();
 });

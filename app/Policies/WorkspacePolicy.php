@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Policies;
 
+use App\Enums\WorkspaceRole;
 use App\Models\User;
 use App\Models\Workspace;
 use Illuminate\Database\Eloquent\Relations\Pivot;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 final class WorkspacePolicy
 {
     /**
-     * Check if user is a member of workspace
+     * Any member can view the workspace
      */
     public function view(User $user, Workspace $workspace): bool
     {
@@ -19,11 +20,11 @@ final class WorkspacePolicy
     }
 
     /**
-     * Only owner can update workspace details
+     * Only owner can update workspace settings
      */
     public function update(User $user, Workspace $workspace): bool
     {
-        return $user->id === (string) ($workspace->owner_id);
+        return $this->getUserRole($user, $workspace) === WorkspaceRole::Owner;
     }
 
     /**
@@ -31,26 +32,17 @@ final class WorkspacePolicy
      */
     public function delete(User $user, Workspace $workspace): bool
     {
-        return $user->id === (string) $workspace->owner_id;
+        return $this->getUserRole($user, $workspace) === WorkspaceRole::Owner;
     }
 
     /**
-     * Owner + Admin can manage members
+     * Owner and Admin can manage members
      */
     public function manageMembers(User $user, Workspace $workspace): bool
     {
-        $member = $workspace->members()
-            ->where('user_id', $user->id)
-            ->first();
+        $role = $this->getUserRole($user, $workspace);
 
-        if (! $member) {
-            return false;
-        }
-
-        /** @var Pivot&object{role: string} $pivot */
-        $pivot = $member->pivot;
-
-        return in_array($pivot->role, ['owner', 'admin']);
+        return $role?->isAdmin() ?? false;
     }
 
     /**
@@ -58,8 +50,7 @@ final class WorkspacePolicy
      */
     public function assignRole(User $user, Workspace $workspace): bool
     {
-
-        return $user->id === (string) $workspace->owner_id;
+        return $this->getUserRole($user, $workspace) === WorkspaceRole::Owner;
     }
 
     /**
@@ -71,21 +62,31 @@ final class WorkspacePolicy
     }
 
     /**
-     * Admin + Owner can create projects
+     * Owner and Admin can create projects
      */
     public function createProject(User $user, Workspace $workspace): bool
+    {
+        $role = $this->getUserRole($user, $workspace);
+
+        return $role?->isAdmin() ?? false;
+    }
+
+    /**
+     * Get user's role in workspace
+     */
+    private function getUserRole(User $user, Workspace $workspace): ?WorkspaceRole
     {
         $member = $workspace->members()
             ->where('user_id', $user->id)
             ->first();
 
         if (! $member) {
-            return false;
+            return null;
         }
 
         /** @var Pivot&object{role: string} $pivot */
         $pivot = $member->pivot;
 
-        return in_array($pivot->role, ['owner', 'admin']);
+        return WorkspaceRole::tryFrom($pivot->role);
     }
 }

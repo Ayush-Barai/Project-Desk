@@ -25,11 +25,9 @@ final class ListWorkspaces extends Component
 
     public function deleteWorkspace(int $id): void
     {
-        $workspace = Workspace::findOrFail($id);
+        abort_if(auth()->user()->can('delete'), 403, 'You can not delete the workspace !!!');
 
-        $this->authorize('delete', $workspace);
-
-        $workspace->delete();
+        Workspace::destroy(['id' => $id]);
     }
 
     public function render(): View
