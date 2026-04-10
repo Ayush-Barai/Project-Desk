@@ -11,9 +11,14 @@ use Livewire\Component;
 
 final class ListProject extends Component
 {
+    /**
+     * Summary of getProjectsProperty
+     *
+     * @return Collection<int, Project>
+     */
     public function getProjectsProperty(): Collection
     {
-        return Project::where('workspace_id', session('workspace_id'))->get();
+        return Project::query()->where('workspace_id', session('workspace_id'))->get();
     }
 
     public function render(): View

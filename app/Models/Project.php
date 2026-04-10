@@ -6,7 +6,6 @@ namespace App\Models;
 
 use App\Enums\ProjectStatus;
 use Carbon\CarbonInterface;
-use Database\Factories\ProjectFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -35,13 +34,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $color Hex color code for UI representation
  * @property CarbonInterface $created_at
  * @property CarbonInterface $updated_at
+ * @property Workspace $workspace
  */
 final class Project extends Model
 {
-    /**
-     * @use HasFactory<ProjectFactory>
-     */
-    use HasFactory , SoftDeletes;
+    use HasFactory;
+    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.

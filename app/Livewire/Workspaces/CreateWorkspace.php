@@ -6,6 +6,7 @@ namespace App\Livewire\Workspaces;
 
 use App\Models\Workspace;
 use Illuminate\Http\RedirectResponse;
+use Livewire\Features\SupportRedirects\Redirector ;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -16,13 +17,13 @@ final class CreateWorkspace extends Component
 
     public string $description = '';
 
-    public function create(): RedirectResponse
+    public function create() : RedirectResponse|Redirector
     {
         $this->validate([
             'name' => 'required|min:3',
         ]);
 
-        $workspace = Workspace::create([
+        $workspace = Workspace::query()->create([
             'name' => $this->name,
             'slug' => Str::slug($this->name),
             'description' => $this->description,
@@ -36,7 +37,8 @@ final class CreateWorkspace extends Component
 
         session(['workspace_id' => $workspace->id]);
 
-        return redirect()->route('workspaces.show', $workspace);
+
+        return to_route('workspaces.show', $workspace);
     }
 
     public function render(): View

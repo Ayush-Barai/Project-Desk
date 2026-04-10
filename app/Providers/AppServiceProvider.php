@@ -19,8 +19,5 @@ final class AppServiceProvider extends ServiceProvider
         Livewire::component('workspaces.list', ListWorkspaces::class);
     }
 
-    public function register(): void
-    {
-        
-    }
+    public function register(): void {}
 }

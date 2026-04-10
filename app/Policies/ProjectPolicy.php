@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies;
 
 use App\Models\Project;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
-class ProjectPolicy
+final class ProjectPolicy
 {
     // View project (must be project member)
     public function view(User $user, Project $project): bool
@@ -26,7 +27,7 @@ class ProjectPolicy
             ->exists();
     }
 
-    //Update project (only Project Manager)
+    // Update project (only Project Manager)
     public function update(User $user, Project $project): bool
     {
         return $this->isManager($user, $project);

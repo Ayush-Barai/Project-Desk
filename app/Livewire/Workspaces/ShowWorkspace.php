@@ -17,9 +17,7 @@ final class ShowWorkspace extends Component
     public function mount(Workspace $workspace): void
     {
         // Security check (extra safety)
-        if (auth()->user()->id !== $workspace->owner_id) {
-            abort(403);
-        }
+        abort_if(auth()->user()->id !== $workspace->owner_id, 403);
 
         $this->workspace = $workspace;
 
@@ -36,7 +34,7 @@ final class ShowWorkspace extends Component
     // Computed: Projects
     public function getProjectsProperty(): Collection
     {
-        return Project::where('workspace_id', $this->workspace->id)->latest()->get();
+        return Project::query()->where('workspace_id', $this->workspace->id)->latest()->get();
     }
 
     // Computed: Stats
@@ -44,7 +42,7 @@ final class ShowWorkspace extends Component
     {
         return [
             'members' => $this->workspace->members()->count(),
-            'projects' => Project::where('workspace_id', $this->workspace->id)->count(),
+            'projects' => Project::query()->where('workspace_id', $this->workspace->id)->count(),
         ];
     }
 

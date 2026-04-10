@@ -11,6 +11,11 @@ use Livewire\Component;
 
 final class ListWorkspaces extends Component
 {
+    /**
+     * Summary of getWorkspacesProperty
+     *
+     * @return \Illuminate\Contracts\Pagination\Paginator<int, object|object{pivot: TPivotModel|Workspace>}
+     */
     public function getWorkspacesProperty(): Paginator
     {
         $user = auth()->user();
@@ -25,9 +30,8 @@ final class ListWorkspaces extends Component
 
     public function deleteWorkspace(int $id): void
     {
-        if (auth()->user()->can('delete')) {
-            abort(403, 'You can not delete the workspace !!!');
-        }
+        abort_if(auth()->user()->can('delete'), 403, 'You can not delete the workspace !!!');
+
         Workspace::destroy(['id' => $id]);
     }
 

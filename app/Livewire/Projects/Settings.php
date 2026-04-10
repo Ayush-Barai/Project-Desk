@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Livewire\Projects;
 
+// use App\Http\Requests\ProjectRequest;
 use App\Models\Project;
+use Illuminate\Contracts\Validation\ValidationRule;
+use Livewire\Features\SupportRedirects\Redirector;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -25,22 +28,30 @@ final class Settings extends Component
 
     public string $status = 'Planning';
 
+    /**
+     * Summary of rules
+     *
+     * @return array<string,array<mixed>|string|ValidationRule>
+     */
+    public function rules(): array
+    {
+        return (new ProjectRequest())->rules();
+    }
+
+    /**
+     * Summary of rules
+     *
+     * @return array<string,string>
+     */
     public function messages(): array
     {
-        return [
-            'name.required' => 'Project name is required',
-            'name.min' => 'Project name must be at least 3 characters',
-            'end_date.after_or_equal' => 'End date must be after start date',
-            'budget_hours.min' => 'Budget cannot be zero or less',
-        ];
+        return (new ProjectRequest())->messages();
     }
 
     public function mount(Project $project): void
     {
         // (workspace check)
-        if ($project->workspace_id !== session('workspace_id')) {
-            abort(403);
-        }
+        abort_if($project->workspace_id !== session('workspace_id'), 403);
 
         // Only Project Manager allowed (basic check)
         $role = $project->members()
@@ -49,36 +60,36 @@ final class Settings extends Component
             ?->pivot
             ->role;
 
-        if ($role !== 'Project Manager') {
-            abort(403);
-        }
+        abort_if($role !== 'Project Manager', 403);
 
         $this->project = $project;
 
         // preload values
         $this->name = $project->name;
         $this->description = $project->description ?? '';
-        $this->start_date = $project->start_date;
-        $this->end_date = $project->end_date;
-        $this->budget_hours = $project->budget_hours;
+        $this->start_date = (string) $project->start_date;
+        $this->end_date = (string) $project->end_date;
+        $this->budget_hours = (int) $project->budget_hours;
         $this->status = $project->status->value;
     }
 
     // UPDATE PROJECT
     public function update(): void
     {
+        /** @var array<string, mixed> $data */
         $data = $this->validate();
+
         $this->project->update($data);
 
         session()->flash('success', 'Project updated successfully!');
     }
 
     // ARCHIVE (Soft Delete)
-    public function archive(): RedirectResponse
+    public function archive(): Redirector|RedirectResponse
     {
         $this->project->delete();
 
-        return redirect()->route('projects.index');
+        return to_route('projects.index');
     }
 
     // RESTORE
@@ -88,27 +99,15 @@ final class Settings extends Component
     }
 
     // DELETE (Permanent)
-    public function delete(): RedirectResponse
+    public function delete(): Redirector|RedirectResponse
     {
         $this->project->forceDelete();
 
-        return redirect()->route('projects.index');
+        return to_route('projects.index');
     }
 
     public function render(): View
     {
         return view('livewire.projects.settings');
-    }
-
-    public function rules(): array
-    {
-        return [
-            'name' => ['required', 'string', 'min:3', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'start_date' => ['nullable', 'date'],
-            'end_date' => ['nullable', 'date', 'after_or_equal:start_date'],
-            'budget_hours' => ['required', 'integer', 'min:1'],
-            'status' => ['nullable', 'in:Planning,Active,OnHold,Completed,Archived'],
-        ];
     }
 }

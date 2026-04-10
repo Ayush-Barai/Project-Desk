@@ -26,14 +26,10 @@ final class ProjectRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'min:3', 'max:255'],
-
             'description' => ['nullable', 'string'],
-
             'start_date' => ['nullable', 'date'],
             'end_date' => ['nullable', 'date', 'after_or_equal:start_date'],
-
             'budget_hours' => ['required', 'integer', 'min:1'],
-
             'status' => ['nullable', 'in:Planning,Active,OnHold,Completed,Archived'],
         ];
     }
@@ -43,10 +39,8 @@ final class ProjectRequest extends FormRequest
         return [
             'name.required' => 'Project name is required',
             'name.min' => 'Project name must be at least 3 characters',
-
             'end_date.after_or_equal' => 'End date must be after start date',
-
-            'budget_hours.min' => 'Budget cannot be zero or less ',
+            'budget_hours.min' => 'Budget cannot be zero or less',
         ];
     }
 }

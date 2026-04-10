@@ -15,9 +15,7 @@ final class ShowProject extends Component
     public function mount(Project $project): void
     {
         // Ensure project belongs to current workspace
-        if ($project->workspace_id !== session('workspace_id')) {
-            abort(403);
-        }
+        abort_if($project->workspace_id !== session('workspace_id'), 403);
 
         $this->project = $project;
     }
