@@ -6,6 +6,7 @@ namespace App\Livewire\Projects;
 
 use App\Models\Project;
 use Illuminate\Http\RedirectResponse;
+use Livewire\Features\SupportRedirects\Redirector ;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -36,13 +37,13 @@ final class CreateProject extends Component
         ];
     }
 
-    public function create(): RedirectResponse
+    public function create(): RedirectResponse | Redirector
     {
         $this->validate();
         $project = Project::create([
             'workspace_id' => session('workspace_id'),
             'name' => $this->name,
-            'slug' => Str::slug($this->name),
+            'slug' => Str::slug($this->name) . '-' . Str::random(6),
             'description' => $this->description ?? null,
             'start_date' => $this->start_date ?? null,
             'end_date' => $this->end_date ?? null,

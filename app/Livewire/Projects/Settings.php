@@ -8,6 +8,7 @@ use App\Models\Project;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Livewire\Component;
+use Livewire\Features\SupportRedirects\Redirector;
 
 final class Settings extends Component
 {
@@ -74,7 +75,7 @@ final class Settings extends Component
     }
 
     // ARCHIVE (Soft Delete)
-    public function archive(): RedirectResponse
+    public function archive(): RedirectResponse|Redirector
     {
         $this->project->delete();
 
@@ -88,7 +89,7 @@ final class Settings extends Component
     }
 
     // DELETE (Permanent)
-    public function delete(): RedirectResponse
+    public function delete(): RedirectResponse|Redirector
     {
         $this->project->forceDelete();
 
