@@ -7,6 +7,7 @@ namespace App\Livewire\Workspaces;
 use App\Enums\WorkspaceRole;
 use App\Models\User;
 use App\Models\Workspace;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -16,24 +17,28 @@ final class Members extends Component
 
     public string $email = '';
 
-    public array $suggestions = [];
+    /** @var Collection<int,User> */
+    public Collection $suggestions;
 
+    /**
+     * Search for users by email to provide suggestions.
+     * Triggered when the email input field is updated.
+     */
     public function updatedEmail(): void
     {
         if (mb_strlen($this->email) > 1) {
             $this->suggestions = User::query()->where('email', 'like', $this->email.'%')
                 ->limit(5)
-                ->get()
-                ->toArray();
+                ->get();
         } else {
-            $this->suggestions = [];
+            $this->suggestions = new User()->newCollection();
         }
     }
 
     public function selectEmail(string $email): void
     {
         $this->email = $email;
-        $this->suggestions = [];
+        $this->suggestions = new User()->newCollection();
     }
 
     public function mount(Workspace $workspace): void
@@ -67,10 +72,16 @@ final class Members extends Component
         $this->email = '';
     }
 
-    public function updateRole(int $userId, string $role): void
+    /**
+     * Update the role of a workspace member.
+     * Validates that the role is valid before updating the pivot record.
+     */
+    public function updateRole(string $userId, string $role): void
     {
+        $workspace = $this->workspace;
+
         // Only owner can assign roles
-        $this->authorize('assignRole', $this->workspace);
+        $this->authorize('assignRole', $workspace);
 
         // Validate role
         if (! WorkspaceRole::tryFrom($role)) {
@@ -79,17 +90,23 @@ final class Members extends Component
             return;
         }
 
-        $this->workspace->members()->updateExistingPivot($userId, [
+        $workspace->members()->updateExistingPivot($userId, [
             'role' => $role,
         ]);
     }
 
-    public function removeUser(int $userId): void
+    /**
+     * Remove a user from the workspace.
+     * Detaches the user record from the workspace_user pivot table.
+     */
+    public function removeUser(string $userId): void
     {
-        // Authorization check: Only owner and admin can manage members
-        $this->authorize('manageMembers', $this->workspace);
+        $workspace = $this->workspace;
 
-        $this->workspace->members()->detach($userId);
+        // Authorization check: Only owner and admin can manage members
+        $this->authorize('manageMembers', $workspace);
+
+        $workspace->members()->detach($userId);
     }
 
     public function render(): View

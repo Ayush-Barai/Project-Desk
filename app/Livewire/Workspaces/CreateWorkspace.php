@@ -6,7 +6,6 @@ namespace App\Livewire\Workspaces;
 
 use App\Enums\WorkspaceRole;
 use App\Models\Workspace;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -17,7 +16,11 @@ final class CreateWorkspace extends Component
 
     public string $description = '';
 
-    public function create(): RedirectResponse
+    /**
+     * Create a new workspace, attach the owner, and redirect.
+     * Uses mixed return type because Livewire redirects aren't always RedirectResponse objects.
+     */
+    public function create(): mixed
     {
         $this->validate([
             'name' => 'required|min:3',

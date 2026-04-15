@@ -6,7 +6,6 @@ namespace App\Livewire\Workspaces;
 
 use App\Models\Project;
 use App\Models\Workspace;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -25,19 +24,30 @@ final class ShowWorkspace extends Component
         session(['workspace_id' => $workspace->id]);
     }
 
-    // Computed: Members
-    public function getMembersProperty(): Collection
+    /**
+     * Get all members of the workspace.
+     * Includes the role from the pivot table.
+     */
+    public function getMembersProperty(): mixed
     {
         return $this->workspace->members()->withPivot('role')->get();
     }
 
-    // Computed: Projects
-    public function getProjectsProperty(): Collection
+    /**
+     * Get all projects associated with the current workspace.
+     * Results are ordered by most recent creation date.
+     */
+    public function getProjectsProperty(): mixed
     {
         return Project::query()->where('workspace_id', $this->workspace->id)->latest()->get();
     }
 
-    // Computed: Stats
+    /**
+     * Get aggregate statistics for the workspace.
+     * Returns counts of members and projects.
+     *
+     * @return array{members: int, projects: int}
+     */
     public function getStatsProperty(): array
     {
         return [
