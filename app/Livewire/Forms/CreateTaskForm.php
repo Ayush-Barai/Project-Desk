@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\Livewire\Forms;
 
-use Livewire\Attributes\Validate;
-use App\Models\Project;
 use App\Models\Task;
+use Livewire\Attributes\Validate;
 use Livewire\Form;
 
 final class CreateTaskForm extends Form
@@ -16,12 +15,16 @@ final class CreateTaskForm extends Form
 
     #[Validate('required|min:5')]
     public string $description = '';
-    public string $status = 'Todo';
-    public string $priority = 'Medium';
-    public $due_date;
-    public $assigned_to;
-    public $estimated_hours = 0;
 
+    public string $status = 'Todo';
+
+    public string $priority = 'Medium';
+
+    public $due_date;
+
+    public $assigned_to;
+
+    public $estimated_hours = 0;
 
     // public function create()
     // {
