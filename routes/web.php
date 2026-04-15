@@ -7,13 +7,13 @@ use App\Livewire\Projects\ListProject;
 use App\Livewire\Projects\Settings;
 use App\Livewire\Projects\ShowProject;
 use App\Livewire\Projects\Team;
+use App\Livewire\Tasks\CreateTask;
+use App\Livewire\Tasks\ListTasks;
+use App\Livewire\Tasks\ShowTask;
 use App\Livewire\Workspaces\CreateWorkspace;
 use App\Livewire\Workspaces\ListWorkspaces;
 use App\Livewire\Workspaces\Members;
 use App\Livewire\Workspaces\ShowWorkspace;
-use App\Livewire\Tasks\CreateTask;
-use App\Livewire\Tasks\ListTasks;
-use App\Livewire\Tasks\ShowTask;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
@@ -62,10 +62,10 @@ Route::middleware('auth')
         Route::get('/projects/{project}/setting', Settings::class)
             ->name('setting');
 
-});
-            
-Route::get('/{project}/tasks' , ListTasks::class)->name('task.list');
-Route::get('/{project}/task' , CreateTask::class)->name('task.create');
-Route::get('/{project}/task/{task}' , ShowTask::class)->name('task.show');
+    });
+
+Route::get('/{project}/tasks', ListTasks::class)->name('task.list');
+Route::get('/{project}/task', CreateTask::class)->name('task.create');
+Route::get('/{project}/task/{task}', ShowTask::class)->name('task.show');
 
 require __DIR__.'/auth.php';

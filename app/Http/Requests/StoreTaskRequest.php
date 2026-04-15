@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
+use App\Models\Project;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use App\Models\Project;
 
 final class StoreTaskRequest extends FormRequest
 {
@@ -29,11 +29,11 @@ final class StoreTaskRequest extends FormRequest
             'description' => ['nullable', 'string'],
 
             'status' => ['required', Rule::in([
-                'Backlog', 'Todo', 'InProgress', 'InReview', 'Done', 'Cancelled'
+                'Backlog', 'Todo', 'InProgress', 'InReview', 'Done', 'Cancelled',
             ])],
 
             'priority' => ['required', Rule::in([
-                'Low', 'Medium', 'High', 'Urgent'
+                'Low', 'Medium', 'High', 'Urgent',
             ])],
 
             'due_date' => [
@@ -45,7 +45,7 @@ final class StoreTaskRequest extends FormRequest
                             $fail('Due date must be within project duration');
                         }
                     }
-                }
+                },
             ],
 
             'assigned_to' => [
@@ -57,11 +57,11 @@ final class StoreTaskRequest extends FormRequest
                             ->where('user_id', $value)
                             ->exists();
 
-                        if (!$isMember) {
+                        if (! $isMember) {
                             $fail('Assignee must be a project member');
                         }
                     }
-                }
+                },
             ],
 
             'estimated_hours' => [
@@ -76,7 +76,7 @@ final class StoreTaskRequest extends FormRequest
                             $fail('Total estimated hours exceed project budget');
                         }
                     }
-                }
+                },
             ],
         ];
     }

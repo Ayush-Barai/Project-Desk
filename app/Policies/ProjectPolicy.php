@@ -6,7 +6,6 @@ namespace App\Policies;
 
 use App\Models\Project;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 final class ProjectPolicy
 {
@@ -28,7 +27,7 @@ final class ProjectPolicy
             ->exists();
     }
 
-    //Update project (only Project Manager)
+    // Update project (only Project Manager)
     public function update(User $user, Project $project): bool
     {
         return $this->isManager($user, $project);

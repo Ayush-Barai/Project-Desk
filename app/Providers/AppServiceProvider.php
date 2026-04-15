@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
-
 use App\Livewire\Workspaces\ListWorkspaces;
 use App\Models\Project;
 use App\Policies\ProjectPolicy;
@@ -20,8 +19,5 @@ final class AppServiceProvider extends ServiceProvider
         Livewire::component('workspaces.list', ListWorkspaces::class);
     }
 
-    public function register(): void
-    {
-        
-    }
+    public function register(): void {}
 }

@@ -4,21 +4,28 @@ declare(strict_types=1);
 
 namespace App\Livewire\Tasks;
 
-use Livewire\Component;
 use App\Models\Project;
 use App\Models\Task;
+use Livewire\Component;
 
-final class CreateTask extends Component {
-
+final class CreateTask extends Component
+{
     public Project $project;
 
     public string $title = '';
+
     public string $description = '';
+
     public string $status = 'Todo';
+
     public string $priority = 'Medium';
+
     public $due_date;
+
     public $assigned_to;
+
     public $estimated_hours = 0;
+
     public function mount(Project $project)
     {
         // if ($project->workspace_id !== session('workspace_id')) {
@@ -27,7 +34,6 @@ final class CreateTask extends Component {
 
         $this->project = $project;
     }
-
 
     public function create()
     {
@@ -47,7 +53,6 @@ final class CreateTask extends Component {
         return redirect()->route('task.list', $this->project);
     }
 
-
     public function getMembersProperty()
     {
         return $this->project->members;
@@ -57,4 +62,4 @@ final class CreateTask extends Component {
     {
         return view('livewire.tasks.create');
     }
-};
+}
