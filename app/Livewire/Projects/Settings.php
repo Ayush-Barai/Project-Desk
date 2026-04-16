@@ -7,10 +7,10 @@ namespace App\Livewire\Projects;
 // use App\Http\Requests\ProjectRequest;
 use App\Models\Project;
 use Illuminate\Contracts\Validation\ValidationRule;
-use Livewire\Features\SupportRedirects\Redirector;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Livewire\Component;
+use Livewire\Features\SupportRedirects\Redirector;
 
 final class Settings extends Component
 {

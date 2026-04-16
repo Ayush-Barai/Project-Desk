@@ -4,17 +4,14 @@ declare(strict_types=1);
 
 namespace App\Livewire\Forms;
 
-use App\Http\Requests\ProjectRequest;
 use App\Models\Project;
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Http\RedirectResponse;
-use Livewire\Features\SupportRedirects\Redirector ;
 use Illuminate\Support\Str;
+use Livewire\Features\SupportRedirects\Redirector;
 use Livewire\Form;
 
 final class ProjectForm extends Form
 {
-    
     public string $name = '';
 
     public string $description = '';
@@ -29,31 +26,8 @@ final class ProjectForm extends Form
 
     public string $color = 'Gray';
 
-    /**
-     * Summary of rules
-     *
-     * @return array<string,array<mixed>|string|ValidationRule>
-     */
-    public function rules(): array
-    {
-        return (new ProjectRequest())->rules();
-    }
-
-    /**
-     * Summary of rules
-     *
-     * @return array<string,string>
-     */
-    public function messages(): array
-    {
-        return (new ProjectRequest())->messages();
-    }
-
-    
-
     public function create(): Redirector|RedirectResponse
     {
-        $this->validate();
         $project = Project::query()->create([
             'workspace_id' => session('workspace_id'),
             'name' => $this->name,
@@ -72,4 +46,4 @@ final class ProjectForm extends Form
 
         return to_route('projects.index');
     }
-};
+}

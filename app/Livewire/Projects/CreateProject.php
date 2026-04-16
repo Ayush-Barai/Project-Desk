@@ -7,22 +7,24 @@ namespace App\Livewire\Projects;
 // use App\Http\Requests\ProjectRequest;
 // use App\Models\Project;
 // use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Http\RedirectResponse;
-use Livewire\Features\SupportRedirects\Redirector ;
-// use Illuminate\Support\Str;
 use App\Livewire\Forms\ProjectForm;
+use Illuminate\Http\RedirectResponse;
+// use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Component;
+use Livewire\Features\SupportRedirects\Redirector;
+
 // use Livewire\Form;
 
-final class CreateProject extends Component 
+final class CreateProject extends Component
 {
-    public ProjectForm $form ;
-    
+    public ProjectForm $form;
+
     public function create(): Redirector|RedirectResponse
     {
         return $this->form->create();
     }
+
     public function render(): View
     {
         return view('livewire.projects.create');

@@ -17,7 +17,7 @@
             <!-- Project Name -->
             <div>
                 <label class="block text-sm text-gray-400 mb-1">Project Name</label>
-                <input wire:model="name"
+                <input wire:model="form.name"
                        type="text"
                        placeholder="e.g. Website Redesign"
                        class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -27,7 +27,7 @@
             <!-- Description -->
             <div>
                 <label class="block text-sm text-gray-400 mb-1">Description</label>
-                <textarea wire:model="description"
+                <textarea wire:model="form.description"
                           rows="3"
                           placeholder="Short description about the project..."
                           class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
@@ -39,7 +39,7 @@
                 <div>
                     <label class="block text-sm text-gray-400 mb-1">Start Date</label>
                     <input type="date"
-                           wire:model="start_date"
+                           wire:model="form.start_date"
                            class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500">
                     @error('start_date') <p class="text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
                 </div>
@@ -47,7 +47,7 @@
                 <div>
                     <label class="block text-sm text-gray-400 mb-1">End Date</label>
                     <input type="date"
-                           wire:model="end_date"
+                           wire:model="form.end_date"
                            class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500">
                     @error('end_date') <p class="text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
                 </div>
@@ -57,7 +57,7 @@
             <div>
                 <label class="block text-sm text-gray-400 mb-1">Budget Hours</label>
                 <input type="number"
-                       wire:model="budget_hours"
+                       wire:model="form.budget_hours"
                        placeholder="e.g. 120"
                        class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500">
                 @error('budget_hours') <p class="text-red-400 text-sm mt-1">{{ $message }}</p> @enderror

@@ -6,6 +6,8 @@ namespace App\Models;
 
 use App\Enums\ProjectStatus;
 use Carbon\CarbonInterface;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -38,8 +40,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 final class Project extends Model
 {
-    use HasFactory;
-    use SoftDeletes;
+    use HasFactory,SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -59,18 +60,6 @@ final class Project extends Model
         'end_date',
         'budget_hours',
         'color',
-    ];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * Automatically converts enum fields to their respective enum classes
-     * and handles type conversions for other attributes.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'status' => ProjectStatus::class,
     ];
 
     /**
@@ -164,5 +153,30 @@ final class Project extends Model
     public function latestActivity(): HasOne
     {
         return $this->hasOne(Activity::class, 'project_id', 'id')->latestOfMany();
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'status' => ProjectStatus::class,
+        ];
+    }
+
+    /**
+     * Scope a query to only include active projects.
+     *
+     * This scope filters projects based on their status, allowing retrieval of only those that are currently active. It can be used in query builder chains for convenient filtering.
+     *
+     * @return Builder if the project is active, false otherwise
+     */
+    #[Scope]
+    protected function active(Builder $query): Builder
+    {
+        return $query->where('status', ProjectStatus::Active);
     }
 }
