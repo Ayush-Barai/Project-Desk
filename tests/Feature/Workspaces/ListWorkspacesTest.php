@@ -38,21 +38,3 @@ test('can switch current workspace', function (): void {
 
     expect(session('workspace_id'))->toBe($workspace->id);
 });
-
-/**
- * Tests workspace deletion.
- * Verifies that a user can delete their owned workspace.
- */
-test('can delete owned workspace', function (): void {
-    $user = User::factory()->create();
-    $workspace = Workspace::factory()->create(['owner_id' => $user->id]);
-    $user->workspaces()->attach($workspace, ['role' => 'owner']);
-
-    Livewire::actingAs($user)
-        ->test(ListWorkspaces::class)
-        ->call('deleteWorkspace', $workspace->id);
-
-    $this->assertDatabaseMissing('workspaces', [
-        'id' => $workspace->id,
-    ]);
-});

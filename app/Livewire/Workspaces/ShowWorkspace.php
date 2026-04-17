@@ -56,6 +56,17 @@ final class ShowWorkspace extends Component
         ];
     }
 
+    public function deleteWorkspace(int $id): mixed
+    {
+        $workspace = Workspace::query()->findOrFail($id);
+
+        $this->authorize('delete', $workspace);
+
+        $workspace->forceDelete();
+
+        return to_route('workspaces.index');
+    }
+
     public function render(): View
     {
         return view('livewire.workspaces.show');

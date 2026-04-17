@@ -9,10 +9,17 @@
             </p>
         </div>
 
-        <a href="{{ route('workspaces.members', $workspace) }}"
-           class="bg-blue-600 hover:bg-blue-700 transition px-4 py-2 rounded-lg font-medium shadow">
-            Manage Members
-        </a>
+        <div class="flex gap-4">
+            <a href="{{ route('workspaces.members', $workspace) }}"
+                class="bg-blue-600 hover:bg-blue-700 transition px-4 py-2 rounded-lg font-medium shadow">
+                    Manage Members
+            </a>
+            <button wire:click.stop="deleteWorkspace({{ $workspace->id }})"
+                    wire:confirm="Are you sure you want to delete {{ $workspace->name }} workspace ?"
+                    class="bg-red-600 hover:bg-red-700 transition px-4 py-2 rounded-lg font-medium shadow">
+                Delete
+            </button>
+        </div>
     </div>
 
     <!-- Stats -->

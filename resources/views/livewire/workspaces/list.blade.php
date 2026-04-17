@@ -20,7 +20,6 @@
 
         @forelse($this->workspaces as $workspace)
             <div class="flex items-center justify-between p-4 hover:bg-gray-600 transition rounded-lg">
-
                 <!-- Left -->
                 <a href="{{ route('workspaces.show', $workspace) }}"
                     wire:click.stop="switch({{ $workspace->id }})"
@@ -32,17 +31,6 @@
                         {{ $workspace->description ?? 'No description' }}
                     </p>
                 </a>
-
-                <!-- Right -->
-                <button wire:click.stop="switch({{ $workspace->id }})"
-                        class="ml-4 bg-blue-600 hover:bg-blue-700 transition px-3 py-1.5 rounded-lg text-sm">
-                    Edit
-                </button>   
-                <button wire:click.stop="deleteWorkspace({{ $workspace->id }})"
-                        wire:confirm="Are you sure you want to delete {{ $workspace->name }} workspace ?"
-                        class="ml-4 bg-red-600 hover:bg-red-700 transition px-3 py-1.5 rounded-lg text-sm">
-                    Delete
-                </button>
 
             </div>
         @empty
