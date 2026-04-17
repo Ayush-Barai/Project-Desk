@@ -14,10 +14,11 @@
                 Overview
             </a>
 
-            <a href="{{ route('projects.team', $project->id) }}"
-            class="px-3 py-1 {{ request()->routeIs('projects.team') ? 'border-b-2 border-blue-500' : '' }}">
-                Team
+             <a href="{{ route('projects.add-member', $project->id) }}"
+                class="px-3 py-1 {{ request()->routeIs('projects.add-member') ? 'border-b-2 border-blue-500' : '' }}">
+                Add Members
             </a>
+
 
             <a href="{{ route('projects.setting', $project->id) }}"
             class="px-3 py-1 {{ request()->routeIs('projects.settings') ? 'border-b-2 border-blue-500' : '' }}">

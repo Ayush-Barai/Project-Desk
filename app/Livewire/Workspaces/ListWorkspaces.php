@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\Workspaces;
 
 use App\Models\Workspace;
-use Illuminate\Pagination\Paginator;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -14,7 +14,7 @@ final class ListWorkspaces extends Component
     /**
      * Summary of getWorkspacesProperty
      *
-     * @return \Illuminate\Contracts\Pagination\Paginator<int, object|object{pivot: TPivotModel|Workspace>}
+     * @return Paginator<int, object|object{pivot: TPivotModel|Workspace>}
      */
     public function getWorkspacesProperty(): Paginator
     {

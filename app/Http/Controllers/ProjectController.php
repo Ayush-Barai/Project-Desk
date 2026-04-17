@@ -6,15 +6,17 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProjectRequest;
 use App\Models\Project;
+use \Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 
 final class ProjectController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index() :View
     {
         // Return all projects with pagination
         // $projects = Project::paginate(10);
@@ -27,7 +29,7 @@ final class ProjectController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create() :View
     {
         // Create a new project
         return view('pages.projects.create');
@@ -36,11 +38,17 @@ final class ProjectController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreProjectRequest $request)
+    public function store(StoreProjectRequest $request) : RedirectResponse
     {
         // Store a newly created project
+
         $request = $request->validated() +
-            ['workspace_id' => session('workspace_id'), 'slug' => Str::slug($request->name).'-'.uniqid(), 'color' => 'gray'];
+            [
+                'workspace_id' => session('workspace_id'),
+                'slug' => Str::slug($request->name).'-'.uniqid(), 
+                'color' => sprintf('#%06X', mt_rand(0, 0xFFFFFF)),
+            ];
+
         Project::create($request);
 
         return redirect()->route('projects.index');
@@ -49,7 +57,7 @@ final class ProjectController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Project $project)
+    public function show(Project $project) :View
     {
         // Show a single project
         return view('pages.projects.show', compact('project'));
@@ -58,7 +66,7 @@ final class ProjectController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Project $project)
+    public function edit(Project $project) :View
     {
         // Show the form for editing a project
         return view('pages.projects.edit', compact('project'));
@@ -67,7 +75,7 @@ final class ProjectController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(StoreProjectRequest $request, Project $project)
+    public function update(StoreProjectRequest $request, Project $project) : RedirectResponse
     {
         // Update the specified project
         $project->update($request->validated());
@@ -77,7 +85,7 @@ final class ProjectController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function archive(Project $project)
+    public function archive(Project $project) : RedirectResponse
     {
         // Remove the specified project
         $project->delete();
@@ -88,7 +96,7 @@ final class ProjectController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function restore(Project $project)
+    public function restore(Project $project) : RedirectResponse
     {
         // Remove the specified project
         $project->restore();
@@ -100,7 +108,7 @@ final class ProjectController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Project $project)
+    public function destroy(Project $project) : RedirectResponse
     {
         // Remove the specified project
         $project->forceDelete();

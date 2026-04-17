@@ -6,7 +6,7 @@ use App\Http\Controllers\ProjectController;
 use App\Livewire\Projects\CreateProject;
 use App\Livewire\Projects\Settings;
 use App\Livewire\Projects\ShowProject;
-use App\Livewire\Projects\Team;
+use App\Livewire\Projects\AddMember;
 use App\Livewire\Workspaces\CreateWorkspace;
 use App\Livewire\Workspaces\ListWorkspaces;
 use App\Livewire\Workspaces\Members;
@@ -23,7 +23,7 @@ Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
 
-Route::middleware(['auth'])
+Route::middleware(['auth' ])
     ->name('workspaces.')
     ->group(function (): void {
 
@@ -41,33 +41,24 @@ Route::middleware(['auth'])
     });
 
 Route::middleware('auth')
+    ->prefix('/projects')
     ->name('projects.')
     ->group(function (): void {
 
-        // Route::get('/projects', ListProject::class)
-        //     ->name('index');
+        Route::get('', [ProjectController::class, 'index'])->name('index');
+        Route::get('/create', [ProjectController::class, 'create'])->name('create');
+        Route::get('/{project}', [ProjectController::class, 'show'])->name('show');
+        Route::get('/{project}/edit', [ProjectController::class, 'edit'])->name('setting');
+        Route::post('/store', [ProjectController::class, 'store'])->name('store');
+        Route::patch('/{project}', [ProjectController::class, 'update'])->name('update');
+        Route::patch('/{project}/archive', [ProjectController::class, 'archive'])->name('archive');
+        Route::patch('/{project}/restore', [ProjectController::class, 'restore'])->name('restore');
+        Route::delete('/{project}', [ProjectController::class, 'destroy'])->name('destroy');
 
-        // Route::get('/projects/create', CreateProject::class)
-        //     ->name('create');
-
-        // Route::get('/projects/{project}', ShowProject::class)
-        //     ->name('show');
-
-        Route::get('/projects/{project}/team', Team::class)
-            ->name('team');
-
-        // Route::get('/projects/{project}/setting', Settings::class)
-        //     ->name('setting');
+        Route::get('/{project}/add-member', AddMember::class)
+            ->name('add-member');
     });
 
-Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
-Route::get('/projects/create', [ProjectController::class, 'create'])->name('projects.create');
-Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('projects.show');
-Route::get('/projects/{project}/edit', [ProjectController::class, 'edit'])->name('projects.setting');
-Route::post('/projects/store', [ProjectController::class, 'store'])->name('projects.store');
-Route::patch('/projects/{project}', [ProjectController::class, 'update'])->name('projects.update');
-Route::patch('/projects/{project}/archive', [ProjectController::class, 'archive'])->name('projects.archive');
-Route::patch('/projects/{project}/restore', [ProjectController::class, 'restore'])->name('projects.restore');
-Route::delete('/projects/{project}', [ProjectController::class, 'destroy'])->name('projects.destroy');
+
 
 require __DIR__.'/auth.php';

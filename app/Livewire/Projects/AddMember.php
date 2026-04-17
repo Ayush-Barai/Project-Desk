@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
 
-final class Team extends Component
+final class AddMember extends Component
 {
     public Project $project;
 
@@ -32,9 +32,9 @@ final class Team extends Component
 
     // Get workspace members (only these can be added)
     /**
-     * @return Collection<int, User>
+     * 
      */
-    public function getWorkspaceMembersProperty(): Collection
+    public function getWorkspaceMembersProperty()
     {
         return $this->project->workspace->members;
     }
@@ -103,7 +103,7 @@ final class Team extends Component
     }
 
     // Update role
-    public function updateRole(int $userId, string $role): void
+    public function updateRole(string $userId, string $role): void
     {
         $this->project->members()->updateExistingPivot($userId, [
             'role' => $role,
@@ -111,13 +111,13 @@ final class Team extends Component
     }
 
     // Remove member
-    public function removeMember(int $userId): void
+    public function removeMember(string $userId): void
     {
         $this->project->members()->detach($userId);
     }
 
     public function render(): View
     {
-        return view('livewire.projects.team');
+        return view('livewire.projects.add-member');
     }
 }
