@@ -6,7 +6,7 @@ namespace App\Models;
 
 use App\Enums\ProjectStatus;
 use Carbon\CarbonInterface;
-use Illuminate\Database\Eloquent\Attributes\Scope;
+use Database\Factories\ProjectFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -40,7 +40,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 final class Project extends Model
 {
-    use HasFactory,SoftDeletes;
+    /**
+     * @use HasFactory<ProjectFactory>
+     */
+    use HasFactory;
+
+    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -61,6 +66,18 @@ final class Project extends Model
         'budget_hours',
         'color',
     ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'status' => ProjectStatus::class,
+        ];
+    }
 
     /**
      * Retrieve the workspace this project belongs to.
@@ -156,26 +173,14 @@ final class Project extends Model
     }
 
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'status' => ProjectStatus::class,
-        ];
-    }
-
-    /**
      * Scope a query to only include active projects.
      *
      * This scope filters projects based on their status, allowing retrieval of only those that are currently active. It can be used in query builder chains for convenient filtering.
      *
-     * @return Builder if the project is active, false otherwise
+     * @param  Builder<$this>  $query
+     * @return Builder<$this> if the project is active, false otherwise
      */
-    #[Scope]
-    protected function active(Builder $query): Builder
+    protected function scopeActive(Builder $query): Builder
     {
         return $query->where('status', ProjectStatus::Active);
     }

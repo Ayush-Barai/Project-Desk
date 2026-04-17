@@ -3,9 +3,6 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\ProjectController;
-use App\Livewire\Projects\CreateProject;
-use App\Livewire\Projects\Settings;
-use App\Livewire\Projects\ShowProject;
 use App\Livewire\Projects\AddMember;
 use App\Livewire\Workspaces\CreateWorkspace;
 use App\Livewire\Workspaces\ListWorkspaces;
@@ -23,7 +20,7 @@ Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
 
-Route::middleware(['auth' ])
+Route::middleware(['auth'])
     ->name('workspaces.')
     ->group(function (): void {
 
@@ -34,13 +31,13 @@ Route::middleware(['auth' ])
             ->name('create');
 
         Route::get('/workspaces/{workspace}', ShowWorkspace::class)
-            ->name('show');
+            ->name('show')->middleware('workspace');
 
         Route::get('/workspaces/{workspace}/members', Members::class)
-            ->name('members');
+            ->name('members')->middleware('workspace');
     });
 
-Route::middleware('auth')
+Route::middleware(['auth', 'workspace'])
     ->prefix('/projects')
     ->name('projects.')
     ->group(function (): void {
@@ -51,14 +48,12 @@ Route::middleware('auth')
         Route::get('/{project}/edit', [ProjectController::class, 'edit'])->name('setting');
         Route::post('/store', [ProjectController::class, 'store'])->name('store');
         Route::patch('/{project}', [ProjectController::class, 'update'])->name('update');
-        Route::patch('/{project}/archive', [ProjectController::class, 'archive'])->name('archive');
+        Route::patch('/{project}/archive', [ProjectController::class, 'destroy'])->name('archive');
         Route::patch('/{project}/restore', [ProjectController::class, 'restore'])->name('restore');
         Route::delete('/{project}', [ProjectController::class, 'destroy'])->name('destroy');
 
         Route::get('/{project}/add-member', AddMember::class)
             ->name('add-member');
     });
-
-
 
 require __DIR__.'/auth.php';

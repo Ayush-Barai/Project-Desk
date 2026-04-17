@@ -4,25 +4,27 @@ declare(strict_types=1);
 
 namespace App\Livewire\Workspaces;
 
+use App\Enums\WorkspaceRole;
 use App\Models\Workspace;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
-use Livewire\Attributes\Validate;
 use Livewire\Component;
-use Livewire\Features\SupportRedirects\Redirector;
 
 final class CreateWorkspace extends Component
 {
-    #[Validate('required|min:3|max:50')]
     public string $name = '';
 
-    #[Validate('required|min:5|max:200')]
     public string $description = '';
 
-    public function create(): RedirectResponse|Redirector
+    /**
+     * Create a new workspace, attach the owner, and redirect.
+     * Uses mixed return type because Livewire redirects aren't always RedirectResponse objects.
+     */
+    public function create(): mixed
     {
-        $this->validate();
+        $this->validate([
+            'name' => 'required|min:3',
+        ]);
 
         $workspace = Workspace::query()->create([
             'name' => $this->name,
@@ -31,9 +33,9 @@ final class CreateWorkspace extends Component
             'owner_id' => auth()->id(),
         ]);
 
-        // Attach owner
+        // Attach owner with Owner role
         $workspace->members()->attach(auth()->id(), [
-            'role' => 'owner',
+            'role' => WorkspaceRole::Owner->value,
         ]);
 
         session(['workspace_id' => $workspace->id]);

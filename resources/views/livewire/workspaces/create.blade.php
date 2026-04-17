@@ -43,13 +43,6 @@
                                  focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
             </div>
 
-            <!-- Preview Slug -->
-            @if($name)
-                <div class="text-xs text-gray-500">
-                    URL: /workspace/{{ \Illuminate\Support\Str::slug($name) }}
-                </div>
-            @endif
-
             <!-- Submit -->
             <button type="submit"
                     class="w-full bg-blue-600 hover:bg-blue-700 transition rounded-lg py-2 font-medium shadow">

@@ -103,3 +103,12 @@ it('returns latest activity', function (): void {
 
     expect($project->latestActivity->id)->toBe($latest->id);
 });
+
+it('has active scope', function (): void {
+    $activeProject = Project::factory()->create(['status' => 'Active']);
+    $completedProject = Project::factory()->create(['status' => 'Completed']);
+
+    $activeProjects = Project::query()->active()->get();
+
+    expect($activeProjects)->not()->toContain($completedProject);
+});

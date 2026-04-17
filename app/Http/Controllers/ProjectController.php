@@ -6,30 +6,43 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProjectRequest;
 use App\Models\Project;
-use \Illuminate\Http\RedirectResponse;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use UnexpectedValueException;
 
 final class ProjectController extends Controller
 {
+    use AuthorizesRequests;
+
+    /**
+     * Apply authorization to all resource methods
+     */
+    public function __construct()
+    {
+        $this->authorizeResource(Project::class, 'project');
+    }
+
     /**
      * Display a listing of the resource.
      */
-    public function index() :View
+    public function index(): View
     {
         // Return all projects with pagination
         // $projects = Project::paginate(10);
 
-        $projects = Project::query()->where('workspace_id', session('workspace_id'))->get();
+        $projects = Project::query()->where('workspace_id', session('workspace_id'))->paginate(1);
 
-        return view('pages.projects.index', compact('projects'));
+        return view('pages.projects.index', ['projects' => $projects]);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create() :View
+    public function create(): View
     {
         // Create a new project
         return view('pages.projects.create');
@@ -38,81 +51,68 @@ final class ProjectController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreProjectRequest $request) : RedirectResponse
+    public function store(StoreProjectRequest $request): RedirectResponse
     {
-        // Store a newly created project
+        $validated = $request->validated();
 
-        $request = $request->validated() +
-            [
-                'workspace_id' => session('workspace_id'),
-                'slug' => Str::slug($request->name).'-'.uniqid(), 
-                'color' => sprintf('#%06X', mt_rand(0, 0xFFFFFF)),
-            ];
+        $name = $validated['name'];
 
-        Project::create($request);
+        throw_unless(is_string($name), UnexpectedValueException::class, 'Name must be a string');
 
-        return redirect()->route('projects.index');
+        $data = $validated + [
+            'workspace_id' => session('workspace_id'),
+            'slug' => Str::slug($name),
+            'color' => 'Blue',
+        ];
+
+        Project::query()->create($data);
+
+        return to_route('projects.index');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Project $project) :View
+    public function show(Project $project): View
     {
         // Show a single project
-        return view('pages.projects.show', compact('project'));
+        return view('pages.projects.show', ['project' => $project]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Project $project) :View
+    public function edit(Project $project): View
     {
         // Show the form for editing a project
-        return view('pages.projects.edit', compact('project'));
+        return view('pages.projects.edit', ['project' => $project]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(StoreProjectRequest $request, Project $project) : RedirectResponse
+    public function update(StoreProjectRequest $request, Project $project): RedirectResponse
     {
         // Update the specified project
         $project->update($request->validated());
 
-        return redirect()->route('projects.show', compact('project'));
-    }
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function archive(Project $project) : RedirectResponse
-    {
-        // Remove the specified project
-        $project->delete();
-
-        return redirect()->route('projects.index');
-
-    }
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function restore(Project $project) : RedirectResponse
-    {
-        // Remove the specified project
-        $project->restore();
-
-        return redirect()->route('projects.index');
-
+        return to_route('projects.show', ['project' => $project]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Project $project) : RedirectResponse
+    public function destroy(Request $request, Project $project): RedirectResponse
     {
         // Remove the specified project
-        $project->forceDelete();
+        if ($request->isMethod('delete')) {
+            // Remove the specified resource from storage.
+            $project->forceDelete();
+        } else {
+            // Soft delete the project
+            $project->delete();
+        }
 
-        return redirect()->route('projects.index');
+        return to_route('projects.index');
     }
 }

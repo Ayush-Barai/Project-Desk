@@ -9,10 +9,20 @@ use App\Models\User;
 
 final class ProjectPolicy
 {
+    // View projects list
+    public function viewAny(User $user): bool
+    {
+        $workspaceId = session('workspace_id');
+
+        return $user->workspaces()
+            ->where('workspace_id', $workspaceId)
+            ->exists();
+    }
+
     // View project (must be project member)
     public function view(User $user, Project $project): bool
     {
-        return $project->users()
+        return $project->members()
             ->where('user_id', $user->id)
             ->exists();
     }
@@ -66,7 +76,7 @@ final class ProjectPolicy
     // Helper method
     private function isManager(User $user, Project $project): bool
     {
-        return $project->users()
+        return $project->members()
             ->where('user_id', $user->id)
             ->where('role', 'Project Manager')
             ->exists();

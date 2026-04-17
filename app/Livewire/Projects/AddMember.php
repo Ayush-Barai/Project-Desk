@@ -32,9 +32,9 @@ final class AddMember extends Component
 
     // Get workspace members (only these can be added)
     /**
-     * 
+     * @return Collection<int, User>
      */
-    public function getWorkspaceMembersProperty()
+    public function getWorkspaceMembersProperty(): Collection
     {
         return $this->project->workspace->members;
     }

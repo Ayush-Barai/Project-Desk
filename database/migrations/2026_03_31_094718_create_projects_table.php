@@ -18,13 +18,13 @@ return new class extends Migration
             $table->id();
             $table->foreignId('workspace_id')->constrained('workspaces')->onDelete('cascade');
             $table->string('name');
-            $table->string('slug')->unique();
+            $table->string('slug');
             $table->string('description')->nullable();
             $table->string('status')->default(ProjectStatus::Planning->value);
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
             $table->decimal('budget_hours', 8, 2)->nullable();
-            $table->string('color');
+            $table->string('color')->default('blue');
             $table->softDeletes('deleted_at');
             $table->timestamps();
         });
