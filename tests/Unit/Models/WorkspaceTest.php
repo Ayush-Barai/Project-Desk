@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * WorkspaceTest
  *
@@ -101,4 +102,14 @@ it('has many tasks through projects', function (): void {
     expect($workspace->tasks)
         ->toHaveCount(4)
         ->each->toBeInstanceOf(Task::class);
+});
+
+// Test: Verify workspace have the valid owner
+// Description: Ensures valid owner see the detail of workspace
+
+it('Check the user is owner ', function (): void {
+    $user = User::factory()->create();
+    $workspace = Workspace::factory()->create(['owner_id' => $user->id]);
+
+    expect($workspace->isOwner($user->id))->toBeTrue();
 });
