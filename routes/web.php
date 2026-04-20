@@ -2,23 +2,15 @@
 
 declare(strict_types=1);
 
-<<<<<<< HEAD
-use App\Http\Controllers\ProjectController;
-use App\Livewire\Projects\AddMember;
-=======
-use App\Livewire\Projects\CreateProject;
-use App\Livewire\Projects\ListProject;
-use App\Livewire\Projects\Settings;
-use App\Livewire\Projects\ShowProject;
-use App\Livewire\Projects\Team;
-use App\Livewire\Tasks\CreateTask;
-use App\Livewire\Tasks\ListTasks;
-use App\Livewire\Tasks\ShowTask;
->>>>>>> acfbaa8 (feat: Refactor task and project management components for improved structure and functionality)
 use App\Livewire\Workspaces\CreateWorkspace;
 use App\Livewire\Workspaces\ListWorkspaces;
 use App\Livewire\Workspaces\Members;
 use App\Livewire\Workspaces\ShowWorkspace;
+use App\Http\Controllers\ProjectController;
+use App\Livewire\Projects\AddMember;
+use App\Livewire\Tasks\CreateTask;
+use App\Livewire\Tasks\ListTasks;
+use App\Livewire\Tasks\ShowTask;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
