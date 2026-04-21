@@ -45,12 +45,6 @@ final class Task extends Model
      */
     use HasFactory;
 
-    // Automatically cast enum fields to their respective enum classes
-    protected $casts = [
-        'status' => TaskStatus::class,
-        'priority' => TaskPriority::class,
-    ];
-
     /**
      * Retrieve the project this task belongs to.
      *
@@ -87,7 +81,7 @@ final class Task extends Model
      */
     public function subtasks(): HasMany
     {
-        return $this->hasMany(self::class, 'parent_task_id');
+        return $this->hasMany(self::class, 'parent_task_id', 'id');
     }
 
     /**
@@ -215,5 +209,18 @@ final class Task extends Model
             'blocked_by_task_id',
             'task_id'
         );
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'status' => TaskStatus::class,
+            'priority' => TaskPriority::class,
+        ];
     }
 }

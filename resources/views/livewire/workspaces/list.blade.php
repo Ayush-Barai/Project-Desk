@@ -22,7 +22,6 @@
             <div class="flex items-center justify-between p-4 hover:bg-gray-600 transition rounded-lg">
                 <!-- Left -->
                 <a href="{{ route('workspaces.show', $workspace) }}"
-                    wire:click.stop="switch({{ $workspace->id }})"
                    class="flex-1">
                     
                     <p class="text-sm font-medium">{{ $workspace->name }}</p>

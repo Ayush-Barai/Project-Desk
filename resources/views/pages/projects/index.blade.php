@@ -19,7 +19,10 @@
                 </div>
             @endforeach
         </div>
-
+        <div class="mt-4">
+            {{ $projects->links() }}
+        </div>
     </div>
+    <!-- Pagination -->
 </x-app>
 

@@ -1,16 +1,15 @@
 <?php
 
 declare(strict_types=1);
-
-use App\Livewire\Workspaces\CreateWorkspace;
-use App\Livewire\Workspaces\ListWorkspaces;
-use App\Livewire\Workspaces\Members;
-use App\Livewire\Workspaces\ShowWorkspace;
 use App\Http\Controllers\ProjectController;
 use App\Livewire\Projects\AddMember;
 use App\Livewire\Tasks\CreateTask;
 use App\Livewire\Tasks\ListTasks;
 use App\Livewire\Tasks\ShowTask;
+use App\Livewire\Workspaces\CreateWorkspace;
+use App\Livewire\Workspaces\ListWorkspaces;
+use App\Livewire\Workspaces\Members;
+use App\Livewire\Workspaces\ShowWorkspace;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
@@ -24,19 +23,20 @@ Route::view('profile', 'profile')
     ->name('profile');
 
 Route::middleware(['auth'])
+    ->prefix('/workspaces')
     ->name('workspaces.')
     ->group(function (): void {
 
-        Route::get('/workspaces', ListWorkspaces::class)
+        Route::get('', ListWorkspaces::class)
             ->name('index');
 
-        Route::get('/workspaces/create', CreateWorkspace::class)
+        Route::get('/create', CreateWorkspace::class)
             ->name('create');
 
-        Route::get('/workspaces/{workspace}', ShowWorkspace::class)
+        Route::get('/{workspace}', ShowWorkspace::class)
             ->name('show')->middleware('workspace');
 
-        Route::get('/workspaces/{workspace}/members', Members::class)
+        Route::get('/{workspace}/members', Members::class)
             ->name('members')->middleware('workspace');
     });
 
@@ -60,7 +60,7 @@ Route::middleware(['auth', 'workspace'])
 
     });
 
-Route::get('/{project}/tasks', ListTasks::class)->name('task.list');
+Route::get('/{project}/tasks', ListTasks::class)->name('tasks.list');
 Route::get('/{project}/task', CreateTask::class)->name('task.create');
 Route::get('/{project}/task/{task}', ShowTask::class)->name('task.show');
 

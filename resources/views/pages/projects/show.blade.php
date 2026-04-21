@@ -43,6 +43,20 @@
                 <h2 class="font-semibold">Budget</h2>
                 <p>{{ $project->budget_hours }} hours</p>
             </div>
+            
+            <div class="flex gap-2">
+                <a 
+                    href="{{ route('tasks.list', ['project' => $project]) }}"
+                    class="bg-green-500 text-white px-3 py-1">
+                    Tasks
+                </a>
+                 <a 
+                    href = "{{ route('task.create' , $project ) }}"
+                    class="bg-blue-500 text-white px-3 py-1">
+                    Create Task
+                </a>
+
+            </div>
 
         </div>
 

@@ -4,61 +4,45 @@ declare(strict_types=1);
 
 namespace App\Livewire\Tasks;
 
+use App\Livewire\Forms\CreateTaskForm;
 use App\Models\Project;
 use App\Models\Task;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 final class CreateTask extends Component
 {
+    use WithFileUploads;
+
     public Project $project;
 
-    public string $title = '';
+    public CreateTaskForm $form;
 
-    public string $description = '';
+    public Task $task;
 
-    public string $status = 'Todo';
-
-    public string $priority = 'Medium';
-
-    public $due_date;
-
-    public $assigned_to;
-
-    public $estimated_hours = 0;
-
-    public function mount(Project $project)
+    public function mount(Project $project, ?Task $task): void
     {
-        // if ($project->workspace_id !== session('workspace_id')) {
-        //     abort(403);
-        // }
-
+        $this->authorize('create', [Task::class, $project]);
         $this->project = $project;
+        $this->task = $task;
     }
 
     public function create()
     {
-        Task::create([
-            'project_id' => $this->project->id,
-            'title' => $this->title,
-            'description' => $this->description,
-            'status' => $this->status,
-            'priority' => $this->priority,
-            'assigned_to' => $this->assigned_to,
-            'created_by' => auth()->id(),
-            'due_date' => $this->due_date,
-            'estimated_hours' => $this->estimated_hours,
-        ]);
-        $this->reset(['title', 'description', 'estimated_hours']);
+        $this->form->create($this->project, $this->task);
 
-        return redirect()->route('task.list', $this->project);
+        return to_route('tasks.list', $this->project);
     }
 
+    // Get project members for task assignment show in create task form
     public function getMembersProperty()
     {
         return $this->project->members;
     }
 
-    public function render()
+    public function render(): Factory|View
     {
         return view('livewire.tasks.create');
     }

@@ -68,18 +68,6 @@ final class Project extends Model
     ];
 
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'status' => ProjectStatus::class,
-        ];
-    }
-
-    /**
      * Retrieve the workspace this project belongs to.
      *
      * Establishes the inverse of a one-to-many relationship with Workspace,
@@ -170,6 +158,18 @@ final class Project extends Model
     public function latestActivity(): HasOne
     {
         return $this->hasOne(Activity::class, 'project_id', 'id')->latestOfMany();
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'status' => ProjectStatus::class,
+        ];
     }
 
     /**

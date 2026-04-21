@@ -18,10 +18,8 @@ final class EnsureWorkspaceMember
     public function handle(Request $request, Closure $next): Response
     {
         $user = auth()->user();
-        $workspaceId = session('workspace_id');
+        $workspaceId = $request->workspace->id ?? session('workspace_id');
         abort_unless((bool) $user, 403, 'User not found');
-        abort_unless((bool) $workspaceId, 403, 'No workspace selected');
-
         $isMember = $user
             ->workspaces()
             ->where('workspace_id', $workspaceId)

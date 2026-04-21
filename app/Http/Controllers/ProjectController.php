@@ -34,7 +34,7 @@ final class ProjectController extends Controller
         // Return all projects with pagination
         // $projects = Project::paginate(10);
 
-        $projects = Project::query()->where('workspace_id', session('workspace_id'))->paginate(1);
+        $projects = Project::query()->where('workspace_id', session('workspace_id'))->paginate(10);
 
         return view('pages.projects.index', ['projects' => $projects]);
     }
@@ -65,7 +65,11 @@ final class ProjectController extends Controller
             'color' => 'Blue',
         ];
 
-        Project::query()->create($data);
+        $project = Project::query()->create($data);
+
+        $project->members()->attach(auth()->id(), [
+            'role' => 'Project Manager',
+        ]);
 
         return to_route('projects.index');
     }

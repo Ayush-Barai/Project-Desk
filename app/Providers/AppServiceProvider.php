@@ -6,6 +6,8 @@ namespace App\Providers;
 
 use App\Livewire\Workspaces\ListWorkspaces;
 use App\Models\Project;
+use App\Models\Task;
+use App\Observers\TaskObserver;
 use App\Policies\ProjectPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -17,6 +19,7 @@ final class AppServiceProvider extends ServiceProvider
     {
         Gate::policy(Project::class, ProjectPolicy::class);
         Livewire::component('workspaces.list', ListWorkspaces::class);
+        Task::observe(TaskObserver::class);
     }
 
     public function register(): void {}

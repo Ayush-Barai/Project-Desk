@@ -13,12 +13,13 @@ final class TaskObserver
     /**
      * Handle the Task "created" event.
      */
-    public function created(Task $task)
+    public function created(Task $task): void
     {
-        Activity::create([
+        Activity::query()->create([
             'user_id' => auth()->id(),
-            'action' => 'created task',
-            'subject_id' => $task->id,
+            'task_id' => $task->id,
+            'project_id' => $task->project_id,
+            'type' => 'task.created',
         ]);
     }
 
@@ -26,10 +27,8 @@ final class TaskObserver
      * Handle the Task "updated" event.
      */
     // TaskObserver.php
-    public function deleting(Task $task)
+    public function deleting(Task $task): void
     {
-        if ($task->timeEntries()->exists()) {
-            throw new Exception('Cannot delete task with time entries');
-        }
+        throw_if($task->timeEntries()->exists(), Exception::class, 'Cannot delete task with time entries');
     }
 }
