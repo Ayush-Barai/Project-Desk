@@ -102,7 +102,7 @@ final class CreateTaskForm extends Form
                 'mime_type' => $file->getClientMimeType(),
                 'size' => $file->getSize(),
                 'disk' => 'public',
-                'attachable_type' => '1',
+                'attachable_type' => Task::class,
                 'attachable_id' => $this->task->id,
             ]);
 
@@ -117,5 +117,6 @@ final class CreateTaskForm extends Form
         ]);
 
         // $this->dispatch('task-created');
+        return redirect()->route('task.list', $project);
     }
 }
